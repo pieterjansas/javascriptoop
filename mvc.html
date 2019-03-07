@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+	<meta charset="utf-8">
+	<title></title>
+
+	<style type="text/css">
+		.error {
+			color: red;
+		}
+
+		label {
+			display: inline-block;
+			text-align: right;
+			width: 100px;
+		}
+	</style>
+
+
+</head>
+
+<body>
+	<h1>Registratieformulier</h1>
+	<div>
+		<p id="intro">Vul hieronder je gegevens in.</p>
+
+		<form id="formulier">
+			<p>
+				<label for="voornaam">Voornaam:</label><input type="text" id="voornaam" />
+				<span class="error" id="voornaam_error"></span>
+			</p>
+			<p>
+				<label for="achternaam">Achternaam:</label><input type="text" id="achternaam" />
+				<span class="error" id="achternaam_error"></span>
+			</p>
+			<p>
+				<label for="straat">Straat:</label><input type="text" id="straat" />
+				<span class="error" id="straat_error"></span>
+			</p>
+			<p>
+				<label for="straatnummer">Nummer:</label><input type="text" id="straatnummer" />
+				<span class="error" id="straatnummer_error"></span>
+			</p>
+			<p>
+				<label for="postcode">Postcode:</label><input type="text" id="postcode" />
+				<span class="error" id="postcode_error"></span>
+			</p>
+			<p>
+				<label for="gemeente">Gemeente:</label><input type="text" id="gemeente" />
+				<span class="error" id="gemeente_error"></span>
+			</p>
+			<p>
+				<label for="email">Email:</label><input type="text" id="email" />
+				<span class="error" id="email_error"></span>
+			</p>
+			<p>
+				<label for="wachtwoord">Wachtwoord:</label><input type="text" id="wachtwoord" />
+				<span class="error" id="wachtwoord_error"></span>
+			</p>
+			<p>
+				<label for="wachtwoordBevestiging">Herhaal wachtwoord:</label><input type="text"
+					id="wachtwoordBevestiging" />
+				<span class="error" id="wachtwoordBevestiging_error"></span>
+			</p>
+			<p>
+				<input type="button" value="Verstuur" id="knop_verstuur" />
+				<!-- geen <button of <input type submit, wan dan wordt pagina gerefresht bij een klik -->
+			</p>
+		</form>
+	</div>
+	<script language="JavaScript" type="text/javascript">
+		"use strict";
+		(function () {
+			var model = {
+				init: function () {
+					if (!localStorage.formulier) {
+						localStorage.formulier = JSON.stringify([]);
+					}
+				},
+				PersoonGegevens: function (gegevens) {
+					var persoonObject = gegevens;
+					console.log(persoonObject)
+					model.save(persoonObject)
+				},
+				save: function (object) {
+					var data = object;
+					console.log(object);
+					localStorage.formulier = JSON.stringify(object);
+				}
+			}
+
+			var view = {
+				setError: function (idee, tekst) {
+					document.getElementById(idee + "_error").innerHTML = tekst;
+					if (tekst != "") {
+						controller.data.allesCorrectIngevuld == false;
+					}
+
+				},
+				showMessageOk: function () {
+
+				},
+				clearInputs: function () {
+					
+				}
+			}
+
+			var controller = {
+				data: {
+					allesCorrectIngevuld: true
+				},
+				init: function () {
+					document.getElementById("knop_verstuur").addEventListener('click', function () {
+						controller.verstuur();
+					});
+
+				},
+				leegVeldControle: function (tekst, idee) {
+					if ((tekst).length == 0) {
+						view.setError(idee, "Vul in a.u.b.");
+						controller.data.allesCorrectIngevuld == false;
+					} else {
+						view.setError(idee, "");
+						controller.data.allesCorrectIngevuld == true;
+					}
+
+				},
+				getValue: function (idee) {
+					var element = document.getElementById(idee).value;
+					return element;
+
+				},
+				checkEmail: function (email) {
+					var regExp = /^[a-z](\.?[a-z0-9+_-]){0,}@[a-z0-9-]+\.([a-z]{1,20}\.)?[a-z]{2,20}$/;
+					return regExp.test(email);
+
+				},
+				controleWw: function (wachtwoord) {
+					if (wachtwoord.length < 7) {
+						view.setError("wachtwoord", "Minstens 7 karakters");
+					} else if (wachtwoord.length > 20) {
+						view.setError("wachtwoord", "Max 20 karakters");
+					} else if (wachtwoord.search(/\d/) == -1) {
+						view.setError("wachtwoord", "Minstens 1 cijfer");
+					} else if (wachtwoord.search(/[a-zA-Z]/) == -1) {
+						view.setError("wachtwoord", "Minstens 1 letter");
+					} else if (wachtwoord.search(
+						/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\{\}\:\<\>\?\\\|\[\]\;\'\,\.\/\~+]/) != -1) {
+						view.setError("wachtwoord", "Bevat niet aanvaardbare tekens");
+					}
+
+				},
+				verstuur: function ()  {
+					var gegevens = {
+						voornaamTxt : controller.getValue("voornaam"),
+						achternaamTxt : controller.getValue("achternaam"),
+						straatTxt : controller.getValue("straat"),
+						straatnummerTxt : controller.getValue("straatnummer"),
+						postcodeTxt : controller.getValue("postcode"),
+						gemeenteTxt : controller.getValue("gemeente"),
+						emailTxt : controller.getValue("email"),
+						wachtwoordTxt : controller.getValue("wachtwoord"),
+						wachtwoordBevestigingTxt : controller.getValue("wachtwoordBevestiging")
+					}
+					
+					if (controller.leegVeldControle(gegevens.voornaamTxt, "voornaam")) {
+						if ((gegevens.voornaamTxt).length < 2) {
+							view.setError("voornaam", "Minstens 2 karakters lang!");
+						}
+					}
+					if (controller.leegVeldControle(gegevens.achternaamTxt, "achternaam")) {
+						if ((gegevens.achternaamTxt).length < 2) {
+							view.setError("achternaam", "Minstens 2 karakters lang!");
+						}
+					}
+					if (controller.leegVeldControle(gegevens.straatTxt, "straat")) {
+						if ((gegevens.straatTxt).length < 2) {
+							view.setError("straat", "Minstens 2 karakters lang!");
+						}
+					}
+					if (controller.leegVeldControle(gegevens.straatnummerTxt, "straatnummer")) {
+						if ((gegevens.straatnummerTxt).search(/\d/) == -1) {
+							view.setError("straatnummer", "Minstens 1 cijfer!");
+						}
+					}
+					if (controller.leegVeldControle(gegevens.postcodeTxt, "postcode")) {
+						if ((gegevens.postcodeTxt).search(/\d{4}/) == -1) {
+							view.setError("postcode", "Minstens 4 cijfers!");
+						}
+					}
+					if (controller.leegVeldControle(gegevens.gemeenteTxt, "gemeente")) {
+						if ((gegevens.gemeenteTxt).length < 2) {
+							view.setError("gemeente",
+								"Minstens 2 karakters lang!");
+						}
+					}
+					if (controller.leegVeldControle(gegevens.emailTxt, "email")) {
+						if (!controller.checkEmail(gegevens.emailTxt)) {
+							view.setError("email", "Dit lijkt niet correct!");
+						}
+					}
+					if (controller.leegVeldControle(gegevens.wachtwoordTxt, "wachtwoord")) {
+						controller.controleWw(gegevens.wachtwoordTxt);
+					}
+					if (controller.leegVeldControle(gegevens.wachtwoordBevestigingTxt, "wachtwoordBevestiging")) {
+						if (gegevens.wachtwoordTxt != gegevens.wachtwoordBevestigingTxt) {
+							view.setError("wachtwoordBevestiging", "Komt niet overeen!");
+						}
+					}
+					if (controller.data.allesCorrectIngevuld == true) {
+						model.PersoonGegevens(gegevens);
+					}
+				}
+			}
+			console.log(controller.data.allesCorrectIngevuld)
+			model.init();
+			controller.init();
+		})();
+	</script>
+</body>
+
+</html>
