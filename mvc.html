@@ -93,9 +93,9 @@
 			var view = {
 				setError: function (idee, tekst) {
 					document.getElementById(idee + "_error").innerHTML = tekst;
-					if (tekst != "") {
-						controller.data.allesCorrectIngevuld == false;
-					}
+					// if (tekst != "") {
+					// 	controller.data.allesCorrectIngevuld == false;
+					// }
 
 				},
 				showMessageOk: function () {
@@ -122,7 +122,8 @@
 						controller.data.allesCorrectIngevuld == false;
 					} else {
 						view.setError(idee, "");
-						controller.data.allesCorrectIngevuld == true;
+						// You don't need to set this everytime
+						// controller.data.allesCorrectIngevuld == true;
 					}
 
 				},
@@ -163,7 +164,8 @@
 						wachtwoordTxt : controller.getValue("wachtwoord"),
 						wachtwoordBevestigingTxt : controller.getValue("wachtwoordBevestiging")
 					}
-					
+					// Start with "allesCorrectIngevuld" equals true
+					controller.data.allesCorrectIngevuld = true;
 					if (controller.leegVeldControle(gegevens.voornaamTxt, "voornaam")) {
 						if ((gegevens.voornaamTxt).length < 2) {
 							view.setError("voornaam", "Minstens 2 karakters lang!");
